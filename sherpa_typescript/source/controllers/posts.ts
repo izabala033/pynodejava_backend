@@ -13,6 +13,9 @@ interface Location {
 // getting all posts
 const getLocs = async (req: Request, res: Response, next: NextFunction) => {
     let cp: any = req.query.cp;
+    if (cp == undefined || cp == null || cp ==""){
+        return res.status(401).json({"error": "please enter a valid cp parameter"});
+    }
 
     var sqlite3 = require("sqlite3").verbose();
     var db = new sqlite3.Database("db.sqlite3", (err: Error) => {
@@ -47,6 +50,9 @@ const getLocs = async (req: Request, res: Response, next: NextFunction) => {
 const deleteLoc = async (req: Request, res: Response, next: NextFunction) => {
    
     let cp: any = req.query.cp;
+    if (cp == undefined || cp == null || cp ==""){
+        return res.status(401).json({"error": "please enter a valid cp parameter"});
+    }
 
     var sqlite3 = require("sqlite3").verbose();
     var db = new sqlite3.Database("db.sqlite3", (err: Error) => {
