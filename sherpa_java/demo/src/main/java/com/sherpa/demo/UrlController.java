@@ -11,6 +11,9 @@ import com.google.gson.Gson;
 public class UrlController {
   // private final String
 
+  final String dbpath = "jdbc:sqlite:/D:/db.sqlite3";
+
+
   @GetMapping("/count")
   public String getCount() {
 
@@ -22,7 +25,7 @@ public class UrlController {
 
     try {
       Class.forName("org.sqlite.JDBC");
-      c = DriverManager.getConnection("jdbc:sqlite:/D:/db.sqlite3");
+      c = DriverManager.getConnection(dbpath);
 
       System.out.println("Opened database successfully");
       stmt = c.createStatement();
@@ -35,7 +38,7 @@ public class UrlController {
       }
     } catch (Exception e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
-      return gson.toJson("An unexpected error occurred");
+      return gson.toJson(e.getMessage());
     } finally {
 
       if (rs != null) {
@@ -87,7 +90,7 @@ public class UrlController {
 
     try {
       Class.forName("org.sqlite.JDBC");
-      c = DriverManager.getConnection("jdbc:sqlite:/D:/db.sqlite3");
+      c = DriverManager.getConnection(dbpath);
       
       System.out.println("Opened database successfully");
       stmt = c.createStatement();
@@ -100,7 +103,7 @@ public class UrlController {
       }
       rs.close();
 
-      rs = stmt.executeQuery("SELECT cp, min(count), avg(count), sum(count) FROM (SELECT cp, count(*) as count FROM location_location GROUP BY(cp));");
+      rs = stmt.executeQuery("SELECT cp, min(count), avg(count) FROM (SELECT cp, count(*) as count FROM location_location GROUP BY(cp));");
       while (rs.next()) {
         minCp.put(rs.getString("cp"), rs.getInt("min(count)"));
         avg = rs.getFloat("avg(count)");
@@ -120,23 +123,14 @@ public class UrlController {
       //sqrt(variance)
       stdev = Math.sqrt(total/count);
 
-
-
-
-
       result.put("max", maxCp);
       result.put("min", minCp);
       result.put("avg", avg);
       result.put("stdev", stdev);
-
-
-
-
-
       
     } catch (Exception e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
-      return gson.toJson("An unexpected error occurred");
+      return gson.toJson(e.getMessage());
     } finally {
 
       if (rs != null) {
